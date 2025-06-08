@@ -1,0 +1,1350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flashcard Creator & Quiz App</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --primary-purple: #6366f1;
+    --secondary-purple: #8b5cf6;
+    --light-purple: #e0e7ff;
+    --dark-purple: #4c1d95;
+    --purple-gradient: linear-gradient(135deg, #6366f1, #8b5cf6);
+    --text-dark: #1f2937;
+    --text-light: #6b7280;
+    --background: #f8fafc;
+    --white: #ffffff;
+    --border: #e5e7eb;
+    --success: #10b981;
+    --danger: #ef4444;
+    --warning: #f59e0b;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: var(--background);
+    color: var(--text-dark);
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Header */
+header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+header h1 {
+    background: var(--purple-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+}
+
+header p {
+    color: var(--text-light);
+    font-size: 1.1rem;
+}
+
+/* Navigation Tabs */
+.nav-tabs {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 2rem;
+    background: var(--white);
+    border-radius: 12px;
+    padding: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.tab-btn {
+    flex: 1;
+    max-width: 200px;
+    padding: 12px 24px;
+    border: none;
+    background: transparent;
+    color: var(--text-light);
+    font-weight: 500;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.tab-btn.active {
+    background: var(--purple-gradient);
+    color: var(--white);
+    box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
+}
+
+.tab-btn:hover:not(.active) {
+    background: var(--light-purple);
+    color: var(--primary-purple);
+}
+
+/* Tab Content */
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* Cards */
+.card {
+    background: var(--white);
+    border-radius: 16px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border: 1px solid var(--border);
+}
+
+.card h2 {
+    color: var(--dark-purple);
+    margin-bottom: 1.5rem;
+    font-size: 1.5rem;
+}
+
+/* Form Styles */
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: var(--text-dark);
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: var(--primary-purple);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+/* Buttons */
+.btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+}
+
+.btn-primary {
+    background: var(--purple-gradient);
+    color: var(--white);
+    box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+}
+
+.btn-secondary {
+    background: var(--light-purple);
+    color: var(--primary-purple);
+}
+
+.btn-secondary:hover {
+    background: var(--primary-purple);
+    color: var(--white);
+}
+
+.btn-danger {
+    background: var(--danger);
+    color: var(--white);
+}
+
+.btn-danger:hover {
+    background: #dc2626;
+}
+
+/* Upload Area */
+.upload-area {
+    border: 2px dashed var(--primary-purple);
+    border-radius: 12px;
+    padding: 2rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: var(--light-purple);
+}
+
+.upload-area:hover {
+    border-color: var(--secondary-purple);
+    background: #ddd6fe;
+}
+
+.upload-area.dragover {
+    border-color: var(--secondary-purple);
+    background: #ddd6fe;
+    transform: scale(1.02);
+}
+
+.upload-content .upload-icon {
+    font-size: 3rem;
+    display: block;
+    margin-bottom: 1rem;
+}
+
+.upload-content p {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--primary-purple);
+    margin-bottom: 0.5rem;
+}
+
+.upload-content small {
+    color: var(--text-light);
+}
+
+/* Study Section */
+.study-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.study-controls {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+#card-counter {
+    background: var(--light-purple);
+    color: var(--primary-purple);
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-weight: 600;
+}
+
+/* Flashcards Grid */
+.flashcards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+/* Flashcard */
+.flashcard {
+    perspective: 1000px;
+    height: 200px;
+}
+
+.flashcard-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    transition: transform 0.6s;
+    transform-style: preserve-3d;
+    cursor: pointer;
+}
+
+.flashcard.flipped .flashcard-inner {
+    transform: rotateY(180deg);
+}
+
+.flashcard-front,
+.flashcard-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 1.5rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    border: 1px solid var(--border);
+}
+
+.flashcard-front {
+    background: var(--purple-gradient);
+    color: var(--white);
+}
+
+.flashcard-back {
+    background: var(--white);
+    color: var(--text-dark);
+    transform: rotateY(180deg);
+}
+
+.flashcard-content {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-size: 1.1rem;
+    font-weight: 500;
+    line-height: 1.4;
+}
+
+.flashcard-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.flashcard-actions .btn {
+    padding: 6px 12px;
+    font-size: 0.8rem;
+    min-width: auto;
+}
+
+/* Empty State */
+.empty-state {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 3rem;
+    color: var(--text-light);
+}
+
+.empty-state .empty-icon {
+    font-size: 4rem;
+    display: block;
+    margin-bottom: 1rem;
+}
+
+/* Quiz Styles */
+.quiz-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.quiz-progress {
+    flex: 1;
+    min-width: 200px;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 8px;
+    background: var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-top: 0.5rem;
+}
+
+.progress-fill {
+    height: 100%;
+    background: var(--purple-gradient);
+    transition: width 0.3s ease;
+}
+
+.quiz-score {
+    background: var(--light-purple);
+    color: var(--primary-purple);
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-weight: 600;
+}
+
+.quiz-question {
+    background: var(--white);
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.quiz-question h3 {
+    margin-bottom: 2rem;
+    font-size: 1.3rem;
+    color: var(--dark-purple);
+}
+
+.quiz-options {
+    display: grid;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.quiz-option {
+    padding: 1rem 1.5rem;
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: var(--white);
+}
+
+.quiz-option:hover {
+    border-color: var(--primary-purple);
+    background: var(--light-purple);
+}
+
+.quiz-option.selected {
+    border-color: var(--primary-purple);
+    background: var(--primary-purple);
+    color: var(--white);
+}
+
+.quiz-option.correct {
+    border-color: var(--success);
+    background: var(--success);
+    color: var(--white);
+}
+
+.quiz-option.incorrect {
+    border-color: var(--danger);
+    background: var(--danger);
+    color: var(--white);
+}
+
+/* Quiz Results */
+.results-card {
+    background: var(--white);
+    border-radius: 16px;
+    padding: 3rem;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.results-card h2 {
+    color: var(--dark-purple);
+    margin-bottom: 2rem;
+}
+
+.final-score {
+    font-size: 4rem;
+    font-weight: bold;
+    color: var(--primary-purple);
+    margin-bottom: 1rem;
+}
+
+.score-percentage {
+    font-size: 1.5rem;
+    color: var(--text-light);
+    margin-bottom: 2rem;
+}
+
+.results-card .btn {
+    margin: 0 0.5rem;
+}
+
+/* Modal */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+    background-color: var(--white);
+    margin: 5% auto;
+    padding: 2rem;
+    border-radius: 16px;
+    width: 90%;
+    max-width: 500px;
+    position: relative;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+}
+
+.close {
+    position: absolute;
+    right: 1rem;
+    top: 1rem;
+    font-size: 2rem;
+    font-weight: bold;
+    cursor: pointer;
+    color: var(--text-light);
+}
+
+.close:hover {
+    color: var(--text-dark);
+}
+
+.modal-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    margin-top: 1.5rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        padding: 15px;
+    }
+    
+    header h1 {
+        font-size: 2rem;
+    }
+    
+    .nav-tabs {
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .tab-btn {
+        max-width: none;
+    }
+    
+    .card {
+        padding: 1.5rem;
+    }
+    
+    .flashcards-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .study-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .study-controls {
+        justify-content: space-between;
+    }
+    
+    .quiz-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .modal-content {
+        margin: 10% auto;
+        padding: 1.5rem;
+    }
+    
+    .modal-actions {
+        flex-direction: column;
+    }
+    
+    .results-card {
+        padding: 2rem;
+    }
+    
+    .final-score {
+        font-size: 3rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .flashcard-actions {
+        flex-direction: column;
+    }
+    
+    .btn {
+        padding: 10px 16px;
+        font-size: 0.9rem;
+    }
+    
+    .upload-area {
+        padding: 1.5rem;
+    }
+    
+    .upload-content .upload-icon {
+        font-size: 2rem;
+    }
+}
+
+/* Animations */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.flashcard {
+    animation: slideIn 0.3s ease-out;
+}
+
+/* Focus styles for accessibility */
+.btn:focus,
+.tab-btn:focus,
+input:focus,
+textarea:focus {
+    outline: 2px solid var(--primary-purple);
+    outline-offset: 2px;
+}
+
+/* Print styles */
+@media print {
+    .nav-tabs,
+    .btn,
+    .flashcard-actions {
+        display: none;
+    }
+    
+    .flashcard-inner {
+        transform: none !important;
+    }
+    
+    .flashcard-back {
+        transform: none !important;
+        position: relative;
+        margin-top: 1rem;
+    }
+}
+
+</style>
+
+    <div class="container">
+        <header>
+            <h1>📚 Flashcard Creator</h1>
+            <p>Create, study, and quiz yourself with custom flashcards</p>
+        </header>
+
+        <!-- Navigation Tabs -->
+        <nav class="nav-tabs">
+            <button class="tab-btn active" data-tab="create">Create Cards</button>
+            <button class="tab-btn" data-tab="study">Study Cards</button>
+            <button class="tab-btn" data-tab="quiz">Take Quiz</button>
+        </nav>
+
+        <!-- Create Flashcards Section -->
+        <section id="create" class="tab-content active">
+            <div class="card">
+                <h2>Create New Flashcard</h2>
+                <form id="flashcard-form">
+                    <div class="form-group">
+                        <label for="term">Term/Question:</label>
+                        <input type="text" id="term" placeholder="Enter the term or question" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="definition">Definition/Answer:</label>
+                        <textarea id="definition" placeholder="Enter the definition or answer" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Add Flashcard</button>
+                </form>
+            </div>
+
+            <!-- File Upload Section -->
+            <div class="card">
+                <h2>Upload Document</h2>
+                <div class="upload-area" id="upload-area">
+                    <input type="file" id="file-input" accept=".txt,.pdf" hidden>
+                    <div class="upload-content">
+                        <span class="upload-icon">📄</span>
+                        <p>Click to upload or drag & drop</p>
+                        <small>Supports .txt and .pdf files</small>
+                    </div>
+                </div>
+                <button id="parse-btn" class="btn btn-secondary" style="display: none;">Generate Flashcards</button>
+            </div>
+        </section>
+
+        <!-- Study Flashcards Section -->
+        <section id="study" class="tab-content">
+            <div class="study-header">
+                <h2>Study Your Flashcards</h2>
+                <div class="study-controls">
+                    <span id="card-counter">0 cards</span>
+                    <button id="shuffle-btn" class="btn btn-secondary">🔀 Shuffle</button>
+                </div>
+            </div>
+            <div id="flashcards-container" class="flashcards-grid">
+                <div class="empty-state">
+                    <span class="empty-icon">📝</span>
+                    <p>No flashcards yet. Create some to get started!</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Quiz Section -->
+        <section id="quiz" class="tab-content">
+            <div id="quiz-setup" class="card">
+                <h2>Quiz Setup</h2>
+                <p>Test your knowledge with a multiple-choice quiz!</p>
+                <div class="quiz-options">
+                    <label>
+                        <input type="checkbox" id="shuffle-quiz" checked>
+                        Shuffle questions
+                    </label>
+                </div>
+                <button id="start-quiz-btn" class="btn btn-primary">Start Quiz</button>
+            </div>
+
+            <div id="quiz-container" style="display: none;">
+                <div class="quiz-header">
+                    <div class="quiz-progress">
+                        <span id="question-counter">Question 1 of 10</span>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progress-fill"></div>
+                        </div>
+                    </div>
+                    <div class="quiz-score">Score: <span id="current-score">0</span></div>
+                </div>
+
+                <div class="quiz-question">
+                    <h3 id="question-text">What is the definition of...?</h3>
+                    <div class="quiz-options" id="quiz-options">
+                        <!-- Options will be generated dynamically -->
+                    </div>
+                    <button id="next-question-btn" class="btn btn-primary" disabled>Next Question</button>
+                </div>
+            </div>
+
+            <div id="quiz-results" style="display: none;">
+                <div class="results-card">
+                    <h2>Quiz Complete! 🎉</h2>
+                    <div class="final-score">
+                        <span class="score-number" id="final-score">0</span>
+                        <span class="score-total">/ <span id="total-questions">0</span></span>
+                    </div>
+                    <div class="score-percentage" id="score-percentage">0%</div>
+                    <button id="retake-quiz-btn" class="btn btn-primary">Retake Quiz</button>
+                    <button id="back-to-study-btn" class="btn btn-secondary">Back to Study</button>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Edit Modal -->
+    <div id="edit-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Edit Flashcard</h2>
+            <form id="edit-form">
+                <div class="form-group">
+                    <label for="edit-term">Term/Question:</label>
+                    <input type="text" id="edit-term" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit-definition">Definition/Answer:</label>
+                    <textarea id="edit-definition" required></textarea>
+                </div>
+                <div class="modal-actions">
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                    <button type="button" class="btn btn-secondary" id="cancel-edit">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script src="script.js">
+class FlashcardApp {
+  constructor() {
+    this.flashcards = JSON.parse(localStorage.getItem("flashcards")) || []
+    this.currentEditIndex = -1
+    this.quizData = {
+      questions: [],
+      currentQuestion: 0,
+      score: 0,
+      selectedAnswer: null,
+    }
+    this.pdfjsLib = window["pdfjsLib"] // Declare pdfjsLib variable
+
+    this.init()
+  }
+
+  init() {
+    this.setupEventListeners()
+    this.renderFlashcards()
+    this.updateCardCounter()
+
+    // Set PDF.js worker
+    if (typeof this.pdfjsLib !== "undefined") {
+      this.pdfjsLib.GlobalWorkerOptions.workerSrc =
+        "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js"
+    }
+  }
+
+  setupEventListeners() {
+    // Tab navigation
+    document.querySelectorAll(".tab-btn").forEach((btn) => {
+      btn.addEventListener("click", (e) => this.switchTab(e.target.dataset.tab))
+    })
+
+    // Flashcard form
+    document.getElementById("flashcard-form").addEventListener("submit", (e) => {
+      e.preventDefault()
+      this.addFlashcard()
+    })
+
+    // File upload
+    const uploadArea = document.getElementById("upload-area")
+    const fileInput = document.getElementById("file-input")
+
+    uploadArea.addEventListener("click", () => fileInput.click())
+    uploadArea.addEventListener("dragover", (e) => {
+      e.preventDefault()
+      uploadArea.classList.add("dragover")
+    })
+    uploadArea.addEventListener("dragleave", () => {
+      uploadArea.classList.remove("dragover")
+    })
+    uploadArea.addEventListener("drop", (e) => {
+      e.preventDefault()
+      uploadArea.classList.remove("dragover")
+      const files = e.dataTransfer.files
+      if (files.length > 0) {
+        this.handleFileUpload(files[0])
+      }
+    })
+
+    fileInput.addEventListener("change", (e) => {
+      if (e.target.files.length > 0) {
+        this.handleFileUpload(e.target.files[0])
+      }
+    })
+
+    document.getElementById("parse-btn").addEventListener("click", () => {
+      this.parseUploadedFile()
+    })
+
+    // Study controls
+    document.getElementById("shuffle-btn").addEventListener("click", () => {
+      this.shuffleFlashcards()
+    })
+
+    // Quiz controls
+    document.getElementById("start-quiz-btn").addEventListener("click", () => {
+      this.startQuiz()
+    })
+    document.getElementById("next-question-btn").addEventListener("click", () => {
+      this.nextQuestion()
+    })
+    document.getElementById("retake-quiz-btn").addEventListener("click", () => {
+      this.startQuiz()
+    })
+    document.getElementById("back-to-study-btn").addEventListener("click", () => {
+      this.switchTab("study")
+    })
+
+    // Modal controls
+    document.querySelector(".close").addEventListener("click", () => {
+      this.closeModal()
+    })
+    document.getElementById("cancel-edit").addEventListener("click", () => {
+      this.closeModal()
+    })
+    document.getElementById("edit-form").addEventListener("submit", (e) => {
+      e.preventDefault()
+      this.saveEdit()
+    })
+
+    // Close modal when clicking outside
+    window.addEventListener("click", (e) => {
+      const modal = document.getElementById("edit-modal")
+      if (e.target === modal) {
+        this.closeModal()
+      }
+    })
+  }
+
+  switchTab(tabName) {
+    // Update tab buttons
+    document.querySelectorAll(".tab-btn").forEach((btn) => {
+      btn.classList.remove("active")
+    })
+    document.querySelector(`[data-tab="${tabName}"]`).classList.add("active")
+
+    // Update tab content
+    document.querySelectorAll(".tab-content").forEach((content) => {
+      content.classList.remove("active")
+    })
+    document.getElementById(tabName).classList.add("active")
+
+    // Reset quiz if switching away from quiz tab
+    if (tabName !== "quiz") {
+      this.resetQuiz()
+    }
+  }
+
+  addFlashcard() {
+    const term = document.getElementById("term").value.trim()
+    const definition = document.getElementById("definition").value.trim()
+
+    if (term && definition) {
+      const flashcard = {
+        id: Date.now(),
+        term,
+        definition,
+        createdAt: new Date().toISOString(),
+      }
+
+      this.flashcards.push(flashcard)
+      this.saveToLocalStorage()
+      this.renderFlashcards()
+      this.updateCardCounter()
+
+      // Clear form
+      document.getElementById("flashcard-form").reset()
+
+      // Show success message
+      this.showNotification("Flashcard added successfully!", "success")
+    }
+  }
+
+  renderFlashcards() {
+    const container = document.getElementById("flashcards-container")
+
+    if (this.flashcards.length === 0) {
+      container.innerHTML = `
+                <div class="empty-state">
+                    <span class="empty-icon">📝</span>
+                    <p>No flashcards yet. Create some to get started!</p>
+                </div>
+            `
+      return
+    }
+
+    container.innerHTML = this.flashcards
+      .map(
+        (card, index) => `
+            <div class="flashcard" data-index="${index}">
+                <div class="flashcard-inner">
+                    <div class="flashcard-front">
+                        <div class="flashcard-content">${this.escapeHtml(card.term)}</div>
+                        <div class="flashcard-actions">
+                            <button class="btn btn-secondary" onclick="app.editFlashcard(${index})">Edit</button>
+                            <button class="btn btn-danger" onclick="app.deleteFlashcard(${index})">Delete</button>
+                        </div>
+                    </div>
+                    <div class="flashcard-back">
+                        <div class="flashcard-content">${this.escapeHtml(card.definition)}</div>
+                        <div class="flashcard-actions">
+                            <button class="btn btn-secondary" onclick="app.editFlashcard(${index})">Edit</button>
+                            <button class="btn btn-danger" onclick="app.deleteFlashcard(${index})">Delete</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `,
+      )
+      .join("")
+
+    // Add flip functionality
+    document.querySelectorAll(".flashcard").forEach((card) => {
+      card.addEventListener("click", (e) => {
+        if (!e.target.classList.contains("btn")) {
+          card.classList.toggle("flipped")
+        }
+      })
+    })
+  }
+
+  editFlashcard(index) {
+    this.currentEditIndex = index
+    const card = this.flashcards[index]
+
+    document.getElementById("edit-term").value = card.term
+    document.getElementById("edit-definition").value = card.definition
+    document.getElementById("edit-modal").style.display = "block"
+  }
+
+  saveEdit() {
+    const term = document.getElementById("edit-term").value.trim()
+    const definition = document.getElementById("edit-definition").value.trim()
+
+    if (term && definition && this.currentEditIndex >= 0) {
+      this.flashcards[this.currentEditIndex] = {
+        ...this.flashcards[this.currentEditIndex],
+        term,
+        definition,
+      }
+
+      this.saveToLocalStorage()
+      this.renderFlashcards()
+      this.closeModal()
+      this.showNotification("Flashcard updated successfully!", "success")
+    }
+  }
+
+  deleteFlashcard(index) {
+    if (confirm("Are you sure you want to delete this flashcard?")) {
+      this.flashcards.splice(index, 1)
+      this.saveToLocalStorage()
+      this.renderFlashcards()
+      this.updateCardCounter()
+      this.showNotification("Flashcard deleted successfully!", "success")
+    }
+  }
+
+  closeModal() {
+    document.getElementById("edit-modal").style.display = "none"
+    this.currentEditIndex = -1
+  }
+
+  shuffleFlashcards() {
+    for (let i = this.flashcards.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1))
+      ;[this.flashcards[i], this.flashcards[j]] = [this.flashcards[j], this.flashcards[i]]
+    }
+    this.renderFlashcards()
+    this.showNotification("Flashcards shuffled!", "success")
+  }
+
+  updateCardCounter() {
+    const counter = document.getElementById("card-counter")
+    const count = this.flashcards.length
+    counter.textContent = `${count} card${count !== 1 ? "s" : ""}`
+  }
+
+  // Quiz functionality
+  startQuiz() {
+    if (this.flashcards.length < 2) {
+      this.showNotification("You need at least 2 flashcards to start a quiz!", "warning")
+      return
+    }
+
+    this.generateQuizQuestions()
+    this.quizData.currentQuestion = 0
+    this.quizData.score = 0
+    this.quizData.selectedAnswer = null
+
+    document.getElementById("quiz-setup").style.display = "none"
+    document.getElementById("quiz-container").style.display = "block"
+    document.getElementById("quiz-results").style.display = "none"
+
+    this.displayQuestion()
+  }
+
+  generateQuizQuestions() {
+    let questions = [...this.flashcards]
+
+    if (document.getElementById("shuffle-quiz").checked) {
+      questions = this.shuffleArray(questions)
+    }
+
+    this.quizData.questions = questions.map((card) => {
+      const incorrectAnswers = this.flashcards
+        .filter((c) => c.id !== card.id)
+        .sort(() => Math.random() - 0.5)
+        .slice(0, 3)
+        .map((c) => c.definition)
+
+      const allAnswers = [card.definition, ...incorrectAnswers].sort(() => Math.random() - 0.5)
+
+      return {
+        question: card.term,
+        correctAnswer: card.definition,
+        options: allAnswers,
+      }
+    })
+  }
+
+  displayQuestion() {
+    const question = this.quizData.questions[this.quizData.currentQuestion]
+    const questionNumber = this.quizData.currentQuestion + 1
+    const totalQuestions = this.quizData.questions.length
+
+    document.getElementById("question-counter").textContent = `Question ${questionNumber} of ${totalQuestions}`
+    document.getElementById("question-text").textContent = question.question
+    document.getElementById("current-score").textContent = this.quizData.score
+
+    // Update progress bar
+    const progress = (questionNumber / totalQuestions) * 100
+    document.getElementById("progress-fill").style.width = `${progress}%`
+
+    // Render options
+    const optionsContainer = document.getElementById("quiz-options")
+    optionsContainer.innerHTML = question.options
+      .map(
+        (option, index) => `
+            <div class="quiz-option" data-answer="${this.escapeHtml(option)}">
+                ${this.escapeHtml(option)}
+            </div>
+        `,
+      )
+      .join("")
+
+    // Add click handlers to options
+    document.querySelectorAll(".quiz-option").forEach((option) => {
+      option.addEventListener("click", () => this.selectAnswer(option))
+    })
+
+    document.getElementById("next-question-btn").disabled = true
+    this.quizData.selectedAnswer = null
+  }
+
+  selectAnswer(selectedOption) {
+    // Remove previous selections
+    document.querySelectorAll(".quiz-option").forEach((option) => {
+      option.classList.remove("selected", "correct", "incorrect")
+    })
+
+    const selectedAnswer = selectedOption.dataset.answer
+    const correctAnswer = this.quizData.questions[this.quizData.currentQuestion].correctAnswer
+
+    this.quizData.selectedAnswer = selectedAnswer
+    selectedOption.classList.add("selected")
+
+    // Show correct/incorrect styling
+    document.querySelectorAll(".quiz-option").forEach((option) => {
+      const answer = option.dataset.answer
+      if (answer === correctAnswer) {
+        option.classList.add("correct")
+      } else if (answer === selectedAnswer && answer !== correctAnswer) {
+        option.classList.add("incorrect")
+      }
+    })
+
+    // Update score
+    if (selectedAnswer === correctAnswer) {
+      this.quizData.score++
+      document.getElementById("current-score").textContent = this.quizData.score
+    }
+
+    document.getElementById("next-question-btn").disabled = false
+  }
+
+  nextQuestion() {
+    this.quizData.currentQuestion++
+
+    if (this.quizData.currentQuestion < this.quizData.questions.length) {
+      this.displayQuestion()
+    } else {
+      this.showQuizResults()
+    }
+  }
+
+  showQuizResults() {
+    const totalQuestions = this.quizData.questions.length
+    const percentage = Math.round((this.quizData.score / totalQuestions) * 100)
+
+    document.getElementById("quiz-container").style.display = "none"
+    document.getElementById("quiz-results").style.display = "block"
+
+    document.getElementById("final-score").textContent = this.quizData.score
+    document.getElementById("total-questions").textContent = totalQuestions
+    document.getElementById("score-percentage").textContent = `${percentage}%`
+  }
+
+  resetQuiz() {
+    document.getElementById("quiz-setup").style.display = "block"
+    document.getElementById("quiz-container").style.display = "none"
+    document.getElementById("quiz-results").style.display = "none"
+  }
+
+  // File upload functionality
+  handleFileUpload(file) {
+    const fileName = file.name
+    const fileType = file.type
+
+    document.querySelector(".upload-content p").textContent = `Selected: ${fileName}`
+    document.getElementById("parse-btn").style.display = "block"
+
+    this.uploadedFile = file
+  }
+
+  async parseUploadedFile() {
+    if (!this.uploadedFile) return
+
+    const fileType = this.uploadedFile.type
+    let content = ""
+
+    try {
+      if (fileType === "text/plain") {
+        content = await this.readTextFile(this.uploadedFile)
+      } else if (fileType === "application/pdf") {
+        content = await this.readPdfFile(this.uploadedFile)
+      }
+
+      const flashcards = this.extractFlashcardsFromText(content)
+
+      if (flashcards.length > 0) {
+        this.flashcards.push(...flashcards)
+        this.saveToLocalStorage()
+        this.renderFlashcards()
+        this.updateCardCounter()
+        this.showNotification(`Added ${flashcards.length} flashcards from file!`, "success")
+
+        // Reset upload area
+        document.querySelector(".upload-content p").textContent = "Click to upload or drag & drop"
+        document.getElementById("parse-btn").style.display = "none"
+        this.uploadedFile = null
+      } else {
+        this.showNotification('No flashcards found in the file. Make sure to use "Term: Definition" format.', "warning")
+      }
+    } catch (error) {
+      console.error("Error parsing file:", error)
+      this.showNotification("Error parsing file. Please try again.", "error")
+    }
+  }
+
+  readTextFile(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader()
+      reader.onload = (e) => resolve(e.target.result)
+      reader.onerror = reject
+      reader.readAsText(file)
+    })
+  }
+
+  async readPdfFile(file) {
+    if (typeof this.pdfjsLib === "undefined") {
+      throw new Error("PDF.js library not loaded")
+    }
+
+    const arrayBuffer = await file.arrayBuffer()
+    const pdf = await this.pdfjsLib.getDocument(arrayBuffer).promise
+    let fullText = ""
+
+    for (let i = 1; i <= pdf.numPages; i++) {
+      const page = await pdf.getPage(i)
+      const textContent = await page.getTextContent()
+      const pageText = textContent.items.map((item) => item.str).join(" ")
+      fullText += pageText + "\n"
+    }
+
+    return fullText
+  }
+
+  extractFlashcardsFromText(text) {
+    const flashcards = []
+    const lines = text.split("\n")
+
+    for (const line of lines) {
+      // Look for patterns like "Term: Definition" or "Question: Answer"
+      const match = line.match(/^(.+?):\s*(.+)$/)
+      if (match && match[1].trim() && match[2].trim()) {
+        const term = match[1].trim()
+        const definition = match[2].trim()
+
+        // Avoid duplicates
+        if (!this.flashcards.some((card) => card.term.toLowerCase() === term.toLowerCase())) {
+          flashcards.push({
+            id: Date.now() + Math.random(),
+            term,
+            definition,
+            createdAt: new Date().toISOString(),
+          })
+        }
+      }
+    }
+
+    return flashcards
+  }
+
+  // Utility functions
+  saveToLocalStorage() {
+    localStorage.setItem("flashcards", JSON.stringify(this.flashcards))
+  }
+
+  shuffleArray(array) {
+    const shuffled = [...array]
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1))
+      ;[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
+    }
+    return shuffled
+  }
+
+  escapeHtml(text) {
+    const div = document.createElement("div")
+    div.textContent = text
+    return div.innerHTML
+  }
+
+  showNotification(message, type = "info") {
+    // Create notification element
+    const notification = document.createElement("div")
+    notification.className = `notification notification-${type}`
+    notification.textContent = message
+
+    // Style the notification
+    Object.assign(notification.style, {
+      position: "fixed",
+      top: "20px",
+      right: "20px",
+      padding: "12px 24px",
+      borderRadius: "8px",
+      color: "white",
+      fontWeight: "600",
+      zIndex: "10000",
+      transform: "translateX(100%)",
+      transition: "transform 0.3s ease",
+    })
+
+    // Set background color based on type
+    const colors = {
+      success: "#10b981",
+      warning: "#f59e0b",
+      error: "#ef4444",
+      info: "#6366f1",
+    }
+    notification.style.backgroundColor = colors[type] || colors.info
+
+    document.body.appendChild(notification)
+
+    // Animate in
+    setTimeout(() => {
+      notification.style.transform = "translateX(0)"
+    }, 100)
+
+    // Remove after 3 seconds
+    setTimeout(() => {
+      notification.style.transform = "translateX(100%)"
+      setTimeout(() => {
+        if (notification.parentNode) {
+          notification.parentNode.removeChild(notification)
+        }
+      }, 300)
+    }, 3000)
+  }
+}
+
+// Initialize the app
+const app = new FlashcardApp()
+
+</script>
+</body>
+</html>
